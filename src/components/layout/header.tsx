@@ -16,7 +16,7 @@ export function Header({ onSearch, onNewIssue, title, className }: HeaderProps) 
   return (
     <header
       className={cn(
-        "sticky top-0 z-20 flex h-[52px] items-center justify-between border-b border-border/60 bg-card/80 px-5 backdrop-blur-sm",
+        "sticky top-0 z-20 flex h-[52px] items-center justify-between border-b border-border/40 bg-background/60 px-6 backdrop-blur-md",
         className,
       )}
     >

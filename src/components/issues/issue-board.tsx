@@ -83,8 +83,8 @@ function IssueCard({
   return (
     <div
       className={cn(
-        "group relative rounded-lg border border-border/60 bg-card p-3 transition-all duration-150",
-        "hover:border-border hover:shadow-sm",
+        "group relative rounded-[10px] border border-border/40 bg-card/40 p-3.5 transition-all duration-200",
+        "hover:border-border/80 hover:bg-card/60 hover:shadow-md hover:-translate-y-[1px]",
         isPending && "opacity-60",
       )}
     >
@@ -194,12 +194,12 @@ function KanbanColumn({
 }) {
   const { label } = STATUS_META[status];
   return (
-    <div className="flex w-72 shrink-0 flex-col gap-2">
+    <div className="flex w-[300px] shrink-0 flex-col gap-2.5">
       {/* Column header */}
-      <div className="flex items-center gap-2 rounded-lg px-1 py-1.5">
+      <div className="flex items-center gap-2 rounded-lg px-2 py-1">
         <StatusIcon status={status} />
         <span className="text-xs font-semibold text-foreground/80">{label}</span>
-        <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-muted px-1 text-[10px] font-medium text-muted-foreground">
+        <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-muted/60 px-1.5 text-[10px] font-medium text-muted-foreground">
           {issues.length}
         </span>
       </div>

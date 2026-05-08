@@ -79,9 +79,9 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-screen w-[220px] flex-col border-r border-border/60 bg-card">
+    <aside className="fixed left-0 top-0 z-30 flex h-screen w-[220px] flex-col border-r border-border/40 bg-card/30">
       {/* Logo */}
-      <div className="flex h-[52px] items-center gap-2.5 border-b border-border/60 px-4">
+      <div className="flex h-[52px] items-center gap-3 border-b border-border/40 px-5">
         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground">
           <Layers3 className="h-3.5 w-3.5 text-background" />
         </div>
@@ -94,8 +94,8 @@ export function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex flex-1 flex-col gap-0.5 p-3">
-        <p className="mb-1 px-2.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+      <nav className="flex flex-1 flex-col gap-1 p-4">
+        <p className="mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
           Workspace
         </p>
         {navItems.map((item) => (
@@ -104,10 +104,12 @@ export function Sidebar() {
       </nav>
 
       {/* Workspace slug footer */}
-      <div className="border-t border-border/60 p-3">
-        <div className="flex items-center gap-2 rounded-md px-2.5 py-1.5">
-          <div className="h-5 w-5 shrink-0 rounded-sm bg-gradient-to-br from-violet-500 to-indigo-600" />
-          <span className="truncate text-xs font-medium text-muted-foreground">
+      <div className="border-t border-border/40 p-4">
+        <div className="flex items-center gap-2.5 rounded-md px-2.5 py-2 transition-colors hover:bg-accent/40 cursor-pointer">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-violet-500/20 to-indigo-600/20 border border-indigo-500/20">
+            <div className="h-2 w-2 rounded-full bg-indigo-500" />
+          </div>
+          <span className="truncate text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
             {workspaceSlug}
           </span>
         </div>
