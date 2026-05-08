@@ -67,7 +67,7 @@ export function MemberList({
         return (
           <div
             key={member.id}
-            className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-4 py-3"
+            className="flex items-center justify-between rounded-xl border border-border/40 bg-card/40 px-5 py-4 transition-all hover:bg-card/60"
           >
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-semibold uppercase">

@@ -26,7 +26,7 @@ export default async function WorkspacePage({
   return (
     <>
       <Header title={workspace.name} />
-      <div className="mx-auto max-w-4xl space-y-10 p-6">
+      <div className="mx-auto max-w-[1400px] space-y-12 p-8 pt-10">
         {/* Projects */}
         <section>
           <div className="mb-4 flex items-center justify-between">
