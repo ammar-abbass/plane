@@ -83,7 +83,7 @@ export function IssueFormDialog({ workspaceSlug, projectId, open, onOpenChange, 
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) reset(); }}>
-      <DialogContent className="gap-0 p-0 max-w-lg">
+      <DialogContent hideCloseButton className="gap-0 p-0 max-w-lg">
         <DialogHeader className="border-b border-border/60 px-5 py-4">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-sm font-semibold">Create Issue</DialogTitle>

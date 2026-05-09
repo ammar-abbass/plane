@@ -15,7 +15,7 @@ import {
 import { AlertCircle, CheckCircle2, UserPlus } from "lucide-react";
 
 export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
-  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
   const [role, setRole] = useState<"admin" | "member" | "viewer">("member");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,11 +27,11 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    const result = await inviteMember({ workspaceSlug, userId, role });
+    const result = await inviteMember({ workspaceSlug, email, role });
     setLoading(false);
     if (result.success) {
       setSuccess(true);
-      setUserId("");
+      setEmail("");
       setRole("member");
       router.refresh();
     } else {
@@ -44,9 +44,10 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
       <p className="mb-3 text-sm font-medium">Invite member</p>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
-          placeholder="Clerk User ID"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
           className="flex-1 text-sm"
         />
@@ -66,7 +67,7 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
             </SelectItem>
           </SelectContent>
         </Select>
-        <Button type="submit" size="sm" disabled={loading || !userId.trim()} className="gap-1.5">
+        <Button type="submit" size="sm" disabled={loading || !email.trim()} className="gap-1.5">
           <UserPlus className="h-3.5 w-3.5" />
           {loading ? "Inviting…" : "Invite"}
         </Button>

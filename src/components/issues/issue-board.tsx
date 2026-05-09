@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { updateIssue } from "@/server/actions/issue.actions";
@@ -194,7 +194,7 @@ function KanbanColumn({
 }) {
   const { label } = STATUS_META[status];
   return (
-    <div className="flex w-[300px] shrink-0 flex-col gap-2.5">
+    <div className="flex w-[300px] shrink-0 flex-col gap-2.5 max-h-full">
       {/* Column header */}
       <div className="flex items-center gap-2 rounded-lg px-2 py-1">
         <StatusIcon status={status} />
@@ -205,7 +205,7 @@ function KanbanColumn({
       </div>
 
       {/* Cards */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 flex-1 overflow-y-auto min-h-0 pb-2">
         {issues.map((issue) => (
           <IssueCard
             key={issue.id}
@@ -231,6 +231,10 @@ export function IssueBoard({ issues }: { issues: Issue[] }) {
   const projectId = params.projectId as string;
   const [optimistic, setOptimistic] = useState<Issue[]>(issues);
 
+  useEffect(() => {
+    setOptimistic(issues);
+  }, [issues]);
+
   const handleStatusChange = async (issueId: string, status: IssueStatus) => {
     // Optimistic update
     setOptimistic((prev) =>
@@ -252,7 +256,7 @@ export function IssueBoard({ issues }: { issues: Issue[] }) {
   );
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-4">
+    <div className="flex h-full gap-3 overflow-x-auto pb-4">
       {STATUS_COLUMNS.map((status) => (
         <KanbanColumn
           key={status}

@@ -23,13 +23,21 @@ export function ProjectForm({
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const reset = () => { setName(""); setDescription(""); setError(null); };
+  const reset = () => {
+    setName("");
+    setDescription("");
+    setError(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const result = await createProject({ workspaceSlug, name, description: description || undefined });
+    const result = await createProject({
+      workspaceSlug,
+      name,
+      description: description || undefined,
+    });
     setLoading(false);
     if (result.success) {
       reset();
@@ -43,17 +51,31 @@ export function ProjectForm({
 
   return (
     <>
-      <Button variant="premium" size="sm" onClick={() => setOpen(true)} className="h-7 gap-1.5 px-3 text-xs">
+      <Button
+        variant="premium"
+        size="sm"
+        onClick={() => setOpen(true)}
+        className="h-7 gap-1.5 px-3 text-xs"
+      >
         <Plus className="h-3.5 w-3.5" />
         New Project
       </Button>
 
-      <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
-        <DialogContent className="gap-0 p-0 max-w-md">
+      <Dialog
+        open={open}
+        onOpenChange={(v) => {
+          setOpen(v);
+          if (!v) reset();
+        }}
+      >
+        <DialogContent hideCloseButton className="gap-0 p-0 max-w-md">
           <DialogHeader className="border-b border-border/60 px-5 py-4">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-sm font-semibold">Create Project</DialogTitle>
-              <button onClick={() => setOpen(false)} className="rounded-md p-1 text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-md p-1 text-muted-foreground hover:text-foreground"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -72,7 +94,9 @@ export function ProjectForm({
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Description (optional)</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Description (optional)
+                </label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -90,10 +114,21 @@ export function ProjectForm({
               )}
             </div>
             <div className="flex justify-end gap-2 border-t border-border/60 px-5 py-3">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)} className="h-7 text-xs">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setOpen(false)}
+                className="h-7 text-xs"
+              >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" disabled={loading || !name.trim()} className="h-7 text-xs">
+              <Button
+                type="submit"
+                size="sm"
+                disabled={loading || !name.trim()}
+                className="h-7 text-xs"
+              >
                 {loading ? "Creating…" : "Create Project"}
               </Button>
             </div>

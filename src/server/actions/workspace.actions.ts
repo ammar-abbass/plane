@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { db } from "@/server/db";
 import { workspaces, workspaceMembers } from "@/server/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -22,7 +22,7 @@ const updateWorkspaceSchema = z.object({
 
 const inviteMemberSchema = z.object({
   workspaceSlug: z.string().min(1),
-  userId: z.string().min(1),
+  email: z.string().email(),
   role: z.enum(["admin", "member", "viewer"]),
 }).catchall(z.never());
 
@@ -100,11 +100,20 @@ export async function inviteMember(input: unknown): Promise<Result<{ id: string;
     const parsed = inviteMemberSchema.parse(input);
     const member = await requireWorkspaceMember(parsed.workspaceSlug, userId, "admin");
 
+    const client = await clerkClient();
+    const users = await client.users.getUserList({ emailAddress: [parsed.email] });
+    
+    if (users.data.length === 0) {
+      throw new PlaneError("NOT_FOUND", "User with this email not found in the system.", 404);
+    }
+
+    const targetUserId = users.data[0].id;
+
     const existing = await db
       .select({ id: workspaceMembers.id })
       .from(workspaceMembers)
       .where(
-        and(eq(workspaceMembers.workspaceId, member.workspaceId), eq(workspaceMembers.userId, parsed.userId)),
+        and(eq(workspaceMembers.workspaceId, member.workspaceId), eq(workspaceMembers.userId, targetUserId)),
       )
       .limit(1);
 
@@ -114,7 +123,7 @@ export async function inviteMember(input: unknown): Promise<Result<{ id: string;
       .insert(workspaceMembers)
       .values({
         workspaceId: member.workspaceId,
-        userId: parsed.userId,
+        userId: targetUserId,
         role: parsed.role,
         invitedBy: userId,
       })

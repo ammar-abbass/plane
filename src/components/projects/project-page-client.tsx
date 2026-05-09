@@ -5,6 +5,7 @@ import { IssueBoard } from "@/components/issues/issue-board";
 import { IssueFormDialog } from "@/components/issues/issue-form";
 import { Header } from "@/components/layout/header";
 import { CommandPalette } from "@/components/search/command-palette";
+import { useQuery } from "@tanstack/react-query";
 import { useIssueStream } from "@/hooks/use-issue-stream";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import type { IssueStatus, IssuePriority } from "@/types";
@@ -33,21 +34,27 @@ export function ProjectPageClient({ project, issues, workspaceSlug, canCreateIss
 
   useIssueStream(workspaceSlug);
 
+  const { data: realtimeIssues } = useQuery({
+    queryKey: ["issues", project.id],
+    queryFn: () => issues, // mock fetcher; we rely on initialData + SSE cache updates
+    initialData: issues,
+  });
+
   useKeyboardShortcuts({
     onNewIssue: canCreateIssues ? () => setIssueFormOpen(true) : undefined,
     onSearch: () => setSearchOpen(true),
   });
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <Header
         title={project.name}
         onSearch={() => setSearchOpen(true)}
         onNewIssue={canCreateIssues ? () => setIssueFormOpen(true) : undefined}
       />
 
-      <div className="p-5">
-        <IssueBoard issues={issues} />
+      <div className="flex-1 min-h-0 p-5 overflow-hidden">
+        <IssueBoard issues={realtimeIssues} />
       </div>
 
       {canCreateIssues && (
@@ -64,6 +71,6 @@ export function ProjectPageClient({ project, issues, workspaceSlug, canCreateIss
         open={searchOpen}
         onOpenChange={setSearchOpen}
       />
-    </>
+    </div>
   );
 }

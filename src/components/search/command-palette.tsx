@@ -2,46 +2,57 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
-  Search, Hash, CircleDot, Circle, Timer, Eye, CheckCircle2, Ban,
-  AlertCircle, ArrowUp, Minus, ArrowDown, Loader2,
+  Search,
+  Hash,
+  CircleDot,
+  Circle,
+  Timer,
+  Eye,
+  CheckCircle2,
+  Ban,
+  AlertCircle,
+  ArrowUp,
+  Minus,
+  ArrowDown,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { SearchResult, IssueStatus, IssuePriority } from "@/types";
 
 const STATUS_ICON: Record<IssueStatus, React.ElementType> = {
-  backlog:     CircleDot,
-  todo:        Circle,
+  backlog: CircleDot,
+  todo: Circle,
   in_progress: Timer,
-  in_review:   Eye,
-  done:        CheckCircle2,
-  cancelled:   Ban,
+  in_review: Eye,
+  done: CheckCircle2,
+  cancelled: Ban,
 };
 
 const STATUS_COLOR: Record<IssueStatus, string> = {
-  backlog:     "text-slate-400",
-  todo:        "text-blue-400",
+  backlog: "text-slate-400",
+  todo: "text-blue-400",
   in_progress: "text-amber-400",
-  in_review:   "text-violet-400",
-  done:        "text-emerald-400",
-  cancelled:   "text-slate-500",
+  in_review: "text-violet-400",
+  done: "text-emerald-400",
+  cancelled: "text-slate-500",
 };
 
 const PRIORITY_ICON: Record<IssuePriority, React.ElementType> = {
   urgent: AlertCircle,
-  high:   ArrowUp,
+  high: ArrowUp,
   medium: Minus,
-  low:    ArrowDown,
-  none:   Minus,
+  low: ArrowDown,
+  none: Minus,
 };
 
 const PRIORITY_COLOR: Record<IssuePriority, string> = {
   urgent: "text-red-400",
-  high:   "text-orange-400",
+  high: "text-orange-400",
   medium: "text-amber-400",
-  low:    "text-blue-400",
-  none:   "text-slate-500",
+  low: "text-blue-400",
+  none: "text-slate-500",
 };
 
 type Props = {
@@ -69,7 +80,7 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
         url.searchParams.set("q", q);
         const res = await fetch(url.toString());
         if (res.ok) {
-          const data = await res.json() as { results?: SearchResult[] };
+          const data = (await res.json()) as { results?: SearchResult[] };
           setResults(data.results ?? []);
           setSelected(0);
         }
@@ -112,7 +123,8 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-0 overflow-hidden p-0 max-w-xl" aria-label="Search issues">
+      <DialogContent hideCloseButton className="gap-0 overflow-hidden p-0 max-w-xl" aria-label="Search issues">
+        <DialogTitle className="sr-only">Search issues</DialogTitle>
         {/* Search input */}
         <div className="flex items-center gap-3 border-b border-border/60 px-4 py-3">
           {loading ? (
@@ -146,7 +158,9 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
           {!query.trim() && (
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <Search className="h-6 w-6 text-muted-foreground/30" />
-              <p className="mt-2 text-xs text-muted-foreground/60">Type to search across all issues</p>
+              <p className="mt-2 text-xs text-muted-foreground/60">
+                Type to search across all issues
+              </p>
             </div>
           )}
 
@@ -170,7 +184,9 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
                   selected === idx ? "bg-accent" : "hover:bg-accent/50",
                 )}
               >
-                <PriorityIcon className={cn("h-3.5 w-3.5 shrink-0", PRIORITY_COLOR[result.priority])} />
+                <PriorityIcon
+                  className={cn("h-3.5 w-3.5 shrink-0", PRIORITY_COLOR[result.priority])}
+                />
                 <span className="flex-1 truncate text-sm font-medium">{result.title}</span>
                 <div className="flex shrink-0 items-center gap-2">
                   <StatusIcon className={cn("h-3.5 w-3.5", STATUS_COLOR[result.status])} />
@@ -187,7 +203,9 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
         {/* Footer */}
         <div className="flex items-center gap-4 border-t border-border/60 px-4 py-2">
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
-            <kbd className="rounded border border-border bg-muted px-1 font-mono text-[9px]">↑↓</kbd>
+            <kbd className="rounded border border-border bg-muted px-1 font-mono text-[9px]">
+              ↑↓
+            </kbd>
             navigate
           </span>
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
@@ -195,7 +213,9 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
             open
           </span>
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
-            <kbd className="rounded border border-border bg-muted px-1 font-mono text-[9px]">Esc</kbd>
+            <kbd className="rounded border border-border bg-muted px-1 font-mono text-[9px]">
+              Esc
+            </kbd>
             close
           </span>
         </div>
