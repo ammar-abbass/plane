@@ -9,6 +9,8 @@ import {
   Users,
   ChevronRight,
   Layers3,
+  ArrowLeft,
+  Settings2,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -50,10 +52,11 @@ function NavLink({ item }: { item: NavItem }) {
 export function Sidebar() {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug as string | undefined;
+  const projectId = params.projectId as string | undefined;
 
   if (!workspaceSlug) return null;
 
-  const navItems: NavItem[] = [
+  const workspaceNavItems: NavItem[] = [
     {
       href: `/workspaces/${workspaceSlug}`,
       label: "Overview",
@@ -78,6 +81,20 @@ export function Sidebar() {
     },
   ];
 
+  const projectNavItems: NavItem[] = projectId ? [
+    {
+      href: `/workspaces/${workspaceSlug}/projects/${projectId}`,
+      label: "Issues",
+      icon: LayoutGrid,
+      exact: true,
+    },
+    {
+      href: `/workspaces/${workspaceSlug}/projects/${projectId}/settings`,
+      label: "Project Settings",
+      icon: Settings2,
+    },
+  ] : [];
+
   return (
     <aside className="fixed left-0 top-0 z-30 flex h-screen w-[220px] flex-col border-r border-border/40 bg-card/30">
       {/* Logo */}
@@ -95,24 +112,47 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex flex-1 flex-col gap-1 p-4">
-        <p className="mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
-          Workspace
-        </p>
-        {navItems.map((item) => (
-          <NavLink key={item.href} item={item} />
-        ))}
+        {projectId ? (
+          <>
+            <Link
+              href={`/workspaces/${workspaceSlug}/projects`}
+              className="group mb-4 flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+              Back to Projects
+            </Link>
+            <p className="mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
+              Project
+            </p>
+            {projectNavItems.map((item) => (
+              <NavLink key={item.href} item={item} />
+            ))}
+          </>
+        ) : (
+          <>
+            <p className="mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
+              Workspace
+            </p>
+            {workspaceNavItems.map((item) => (
+              <NavLink key={item.href} item={item} />
+            ))}
+          </>
+        )}
       </nav>
 
       {/* Workspace slug footer */}
       <div className="border-t border-border/40 p-4">
-        <div className="flex items-center gap-2.5 rounded-md px-2.5 py-2 transition-colors hover:bg-accent/40 cursor-pointer">
+        <Link 
+          href={`/workspaces/${workspaceSlug}`}
+          className="group flex items-center gap-2.5 rounded-md px-2.5 py-2 transition-colors hover:bg-accent/40 cursor-pointer"
+        >
           <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-violet-500/20 to-indigo-600/20 border border-indigo-500/20">
             <div className="h-2 w-2 rounded-full bg-indigo-500" />
           </div>
           <span className="truncate text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
             {workspaceSlug}
           </span>
-        </div>
+        </Link>
       </div>
     </aside>
   );

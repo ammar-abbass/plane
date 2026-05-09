@@ -6,7 +6,11 @@ import { inviteMember } from "@/server/actions/workspace.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
 import { AlertCircle, CheckCircle2, UserPlus } from "lucide-react";
 
@@ -36,7 +40,7 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
   };
 
   return (
-    <div className="rounded-lg border border-border/60 bg-card p-4">
+    <div className="rounded-lg border border-border/60 bg-card p-4 w-full">
       <p className="mb-3 text-sm font-medium">Invite member</p>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
@@ -51,9 +55,15 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="admin" className="text-xs">Admin</SelectItem>
-            <SelectItem value="member" className="text-xs">Member</SelectItem>
-            <SelectItem value="viewer" className="text-xs">Viewer</SelectItem>
+            <SelectItem value="admin" className="text-xs">
+              Admin
+            </SelectItem>
+            <SelectItem value="member" className="text-xs">
+              Member
+            </SelectItem>
+            <SelectItem value="viewer" className="text-xs">
+              Viewer
+            </SelectItem>
           </SelectContent>
         </Select>
         <Button type="submit" size="sm" disabled={loading || !userId.trim()} className="gap-1.5">

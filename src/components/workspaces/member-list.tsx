@@ -5,18 +5,23 @@ import { useRouter } from "next/navigation";
 import { updateMemberRole, removeMember } from "@/server/actions/workspace.actions";
 import { Button } from "@/components/ui/button";
 import {
-  Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
 import { User, Shield, Eye, Crown, AlertCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { WorkspaceRole } from "@/types";
 
-const ROLE_META: Record<WorkspaceRole, { label: string; Icon: React.ElementType; color: string }> = {
-  owner:  { label: "Owner",  Icon: Crown,  color: "text-amber-400" },
-  admin:  { label: "Admin",  Icon: Shield, color: "text-blue-400" },
-  member: { label: "Member", Icon: User,   color: "text-foreground" },
-  viewer: { label: "Viewer", Icon: Eye,    color: "text-muted-foreground" },
-};
+const ROLE_META: Record<WorkspaceRole, { label: string; Icon: React.ElementType; color: string }> =
+  {
+    owner: { label: "Owner", Icon: Crown, color: "text-amber-400" },
+    admin: { label: "Admin", Icon: Shield, color: "text-blue-400" },
+    member: { label: "Member", Icon: User, color: "text-foreground" },
+    viewer: { label: "Viewer", Icon: Eye, color: "text-muted-foreground" },
+  };
 
 export function MemberList({
   members,
@@ -24,7 +29,13 @@ export function MemberList({
   currentUserId,
   isAdmin,
 }: {
-  members: { id: string; userId: string; role: WorkspaceRole; invitedBy: string | null; joinedAt: Date }[];
+  members: {
+    id: string;
+    userId: string;
+    role: WorkspaceRole;
+    invitedBy: string | null;
+    joinedAt: Date;
+  }[];
   workspaceSlug: string;
   currentUserId: string;
   isAdmin: boolean;
@@ -37,7 +48,10 @@ export function MemberList({
     setLoading(memberId);
     const result = await updateMemberRole({ workspaceSlug, memberId, role });
     setLoading(null);
-    if (!result.success) { setError(result.error.message); return; }
+    if (!result.success) {
+      setError(result.error.message);
+      return;
+    }
     router.refresh();
   };
 
@@ -45,7 +59,10 @@ export function MemberList({
     setLoading(memberId);
     const result = await removeMember({ workspaceSlug, memberId });
     setLoading(null);
-    if (!result.success) { setError(result.error.message); return; }
+    if (!result.success) {
+      setError(result.error.message);
+      return;
+    }
     router.refresh();
   };
 
@@ -74,7 +91,9 @@ export function MemberList({
                 {member.userId.charAt(0)}
               </div>
               <div>
-                <p className="font-mono text-xs text-foreground/80">{member.userId.slice(0, 12)}…</p>
+                <p className="font-mono text-xs text-foreground/80">
+                  {member.userId.slice(0, 12)}…
+                </p>
                 <p className="text-[10px] text-muted-foreground">
                   Joined {new Date(member.joinedAt).toLocaleDateString()}
                 </p>
@@ -93,9 +112,15 @@ export function MemberList({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="admin" className="text-xs">Admin</SelectItem>
-                      <SelectItem value="member" className="text-xs">Member</SelectItem>
-                      <SelectItem value="viewer" className="text-xs">Viewer</SelectItem>
+                      <SelectItem value="admin" className="text-xs">
+                        Admin
+                      </SelectItem>
+                      <SelectItem value="member" className="text-xs">
+                        Member
+                      </SelectItem>
+                      <SelectItem value="viewer" className="text-xs">
+                        Viewer
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
