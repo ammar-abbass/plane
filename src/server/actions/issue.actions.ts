@@ -146,7 +146,15 @@ export async function createIssue(input: unknown): Promise<Result<{ id: string; 
       issueId: result.id,
       projectId: parsed.projectId,
       workspaceSlug: parsed.workspaceSlug,
-      changes: { title: result.title, status: parsed.status ?? "backlog", priority: parsed.priority ?? "none" },
+      changes: { 
+        title: result.title, 
+        sequenceId: result.sequenceId,
+        status: parsed.status ?? "backlog", 
+        priority: parsed.priority ?? "none",
+        assigneeId: parsed.assigneeId ?? null,
+        dueDate: parsed.dueDate ?? null,
+        labels: [],
+      },
       actorId: userId,
       timestamp: new Date().toISOString(),
     });
