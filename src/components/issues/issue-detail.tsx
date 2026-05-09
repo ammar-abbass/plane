@@ -3,15 +3,33 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  updateIssue, addComment, updateComment, deleteComment, deleteIssue,
+  updateIssue,
+  addComment,
+  updateComment,
+  deleteComment,
+  deleteIssue,
 } from "@/server/actions/issue.actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ActivityFeed } from "@/components/activity/activity-feed";
 import {
-  CircleDot, Circle, Timer, Eye, CheckCircle2, Ban,
-  AlertCircle, ArrowUp, Minus, ArrowDown,
-  Calendar, Trash2, Pencil, Check, X, MessageSquare, User,
+  CircleDot,
+  Circle,
+  Timer,
+  Eye,
+  CheckCircle2,
+  Ban,
+  AlertCircle,
+  ArrowUp,
+  Minus,
+  ArrowDown,
+  Calendar,
+  Trash2,
+  Pencil,
+  Check,
+  X,
+  MessageSquare,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { IssueStatus, IssuePriority, ActivityAction } from "@/types";
@@ -31,23 +49,41 @@ type Issue = {
 };
 
 type Comment = { id: string; authorId: string; body: string; createdAt: Date; updatedAt: Date };
-type Activity = { id: string; actorId: string; action: ActivityAction; fromValue: string | null; toValue: string | null; createdAt: Date };
-
-const STATUS_META: Record<IssueStatus, { label: string; Icon: React.ElementType; color: string; bg: string }> = {
-  backlog:     { label: "Backlog",     Icon: CircleDot,    color: "text-slate-400",  bg: "bg-slate-400/10" },
-  todo:        { label: "Todo",        Icon: Circle,       color: "text-blue-400",   bg: "bg-blue-400/10" },
-  in_progress: { label: "In Progress", Icon: Timer,        color: "text-amber-400",  bg: "bg-amber-400/10" },
-  in_review:   { label: "In Review",   Icon: Eye,          color: "text-violet-400", bg: "bg-violet-400/10" },
-  done:        { label: "Done",        Icon: CheckCircle2, color: "text-emerald-400",bg: "bg-emerald-400/10" },
-  cancelled:   { label: "Cancelled",   Icon: Ban,          color: "text-slate-500",  bg: "bg-slate-400/10" },
+type Activity = {
+  id: string;
+  actorId: string;
+  action: ActivityAction;
+  fromValue: string | null;
+  toValue: string | null;
+  createdAt: Date;
 };
 
-const PRIORITY_META: Record<IssuePriority, { label: string; Icon: React.ElementType; color: string }> = {
+const STATUS_META: Record<
+  IssueStatus,
+  { label: string; Icon: React.ElementType; color: string; bg: string }
+> = {
+  backlog: { label: "Backlog", Icon: CircleDot, color: "text-slate-400", bg: "bg-slate-400/10" },
+  todo: { label: "Todo", Icon: Circle, color: "text-blue-400", bg: "bg-blue-400/10" },
+  in_progress: {
+    label: "In Progress",
+    Icon: Timer,
+    color: "text-amber-400",
+    bg: "bg-amber-400/10",
+  },
+  in_review: { label: "In Review", Icon: Eye, color: "text-violet-400", bg: "bg-violet-400/10" },
+  done: { label: "Done", Icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+  cancelled: { label: "Cancelled", Icon: Ban, color: "text-slate-500", bg: "bg-slate-400/10" },
+};
+
+const PRIORITY_META: Record<
+  IssuePriority,
+  { label: string; Icon: React.ElementType; color: string }
+> = {
   urgent: { label: "Urgent", Icon: AlertCircle, color: "text-red-400" },
-  high:   { label: "High",   Icon: ArrowUp,     color: "text-orange-400" },
-  medium: { label: "Medium", Icon: Minus,       color: "text-amber-400" },
-  low:    { label: "Low",    Icon: ArrowDown,   color: "text-blue-400" },
-  none:   { label: "None",   Icon: Minus,       color: "text-slate-500" },
+  high: { label: "High", Icon: ArrowUp, color: "text-orange-400" },
+  medium: { label: "Medium", Icon: Minus, color: "text-amber-400" },
+  low: { label: "Low", Icon: ArrowDown, color: "text-blue-400" },
+  none: { label: "None", Icon: Minus, color: "text-slate-500" },
 };
 
 function MetaSelect<T extends string>({
@@ -79,7 +115,10 @@ function MetaSelect<T extends string>({
             {options.map((opt) => (
               <button
                 key={opt}
-                onClick={() => { onChange(opt); setOpen(false); }}
+                onClick={() => {
+                  onChange(opt);
+                  setOpen(false);
+                }}
                 className={cn(
                   "flex w-full items-center gap-2 px-3 py-1.5 text-xs transition-colors hover:bg-accent",
                   opt === value && "bg-accent/60",
@@ -126,13 +165,19 @@ export function IssueDetailClient({
   const handleStatusChange = async (status: IssueStatus) => {
     setIssue((prev) => ({ ...prev, status }));
     const result = await updateIssue({ issueId: issue.id, workspaceSlug, status });
-    if (!result.success) { setIssue(initialIssue); setError(result.error.message); }
+    if (!result.success) {
+      setIssue(initialIssue);
+      setError(result.error.message);
+    }
   };
 
   const handlePriorityChange = async (priority: IssuePriority) => {
     setIssue((prev) => ({ ...prev, priority }));
     const result = await updateIssue({ issueId: issue.id, workspaceSlug, priority });
-    if (!result.success) { setIssue(initialIssue); setError(result.error.message); }
+    if (!result.success) {
+      setIssue(initialIssue);
+      setError(result.error.message);
+    }
   };
 
   const handleTitleSave = async () => {
@@ -140,14 +185,24 @@ export function IssueDetailClient({
     setEditingTitle(false);
     setIssue((prev) => ({ ...prev, title: titleDraft }));
     const result = await updateIssue({ issueId: issue.id, workspaceSlug, title: titleDraft });
-    if (!result.success) { setIssue(initialIssue); setError(result.error.message); }
+    if (!result.success) {
+      setIssue(initialIssue);
+      setError(result.error.message);
+    }
   };
 
   const handleDescSave = async () => {
     setEditingDesc(false);
     setIssue((prev) => ({ ...prev, description: descDraft || null }));
-    const result = await updateIssue({ issueId: issue.id, workspaceSlug, description: descDraft || null });
-    if (!result.success) { setIssue(initialIssue); setError(result.error.message); }
+    const result = await updateIssue({
+      issueId: issue.id,
+      workspaceSlug,
+      description: descDraft || null,
+    });
+    if (!result.success) {
+      setIssue(initialIssue);
+      setError(result.error.message);
+    }
   };
 
   const handleAddComment = async (e: React.FormEvent) => {
@@ -157,7 +212,13 @@ export function IssueDetailClient({
     if (result.success) {
       setCommentBody("");
       setComments((prev) => [
-        { id: result.data.id, authorId: currentUserId, body: result.data.body, createdAt: new Date(), updatedAt: new Date() },
+        {
+          id: result.data.id,
+          authorId: currentUserId,
+          body: result.data.body,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
         ...prev,
       ]);
     } else {
@@ -169,7 +230,7 @@ export function IssueDetailClient({
     const result = await updateComment({ commentId, workspaceSlug, body: editCommentBody });
     if (result.success) {
       setComments((prev) =>
-        prev.map((c) => c.id === commentId ? { ...c, body: editCommentBody } : c),
+        prev.map((c) => (c.id === commentId ? { ...c, body: editCommentBody } : c)),
       );
       setEditingCommentId(null);
     } else {
@@ -210,7 +271,9 @@ export function IssueDetailClient({
           <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             {error}
-            <button onClick={() => setError(null)} className="ml-auto"><X className="h-3.5 w-3.5" /></button>
+            <button onClick={() => setError(null)} className="ml-auto">
+              <X className="h-3.5 w-3.5" />
+            </button>
           </div>
         )}
 
@@ -224,18 +287,39 @@ export function IssueDetailClient({
                 onChange={(e) => setTitleDraft(e.target.value)}
                 rows={2}
                 autoFocus
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleTitleSave(); } if (e.key === "Escape") setEditingTitle(false); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleTitleSave();
+                  }
+                  if (e.key === "Escape") setEditingTitle(false);
+                }}
               />
               <div className="flex flex-col gap-1">
-                <Button size="sm" onClick={handleTitleSave} className="h-7 w-7 p-0"><Check className="h-3.5 w-3.5" /></Button>
-                <Button size="sm" variant="ghost" onClick={() => { setEditingTitle(false); setTitleDraft(issue.title); }} className="h-7 w-7 p-0"><X className="h-3.5 w-3.5" /></Button>
+                <Button size="sm" onClick={handleTitleSave} className="h-7 w-7 p-0">
+                  <Check className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setEditingTitle(false);
+                    setTitleDraft(issue.title);
+                  }}
+                  className="h-7 w-7 p-0"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </Button>
               </div>
             </div>
           ) : (
             <div className="group flex items-start gap-2">
               <h1 className="flex-1 text-xl font-semibold leading-snug">{issue.title}</h1>
               <button
-                onClick={() => { setEditingTitle(true); setTitleDraft(issue.title); }}
+                onClick={() => {
+                  setEditingTitle(true);
+                  setTitleDraft(issue.title);
+                }}
                 className="mt-1 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -257,8 +341,20 @@ export function IssueDetailClient({
                 className="resize-none text-sm"
               />
               <div className="flex gap-2">
-                <Button size="sm" onClick={handleDescSave} className="h-7 text-xs">Save</Button>
-                <Button size="sm" variant="ghost" onClick={() => { setEditingDesc(false); setDescDraft(issue.description ?? ""); }} className="h-7 text-xs">Cancel</Button>
+                <Button size="sm" onClick={handleDescSave} className="h-7 text-xs">
+                  Save
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setEditingDesc(false);
+                    setDescDraft(issue.description ?? "");
+                  }}
+                  className="h-7 text-xs"
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
           ) : (
@@ -315,7 +411,10 @@ export function IssueDetailClient({
 
           <div className="space-y-3">
             {comments.map((comment) => (
-              <div key={comment.id} className="group rounded-lg border border-border/60 bg-card p-3">
+              <div
+                key={comment.id}
+                className="group rounded-lg border border-border/60 bg-card p-3"
+              >
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5">
                     <User className="h-3.5 w-3.5 text-muted-foreground" />
@@ -329,7 +428,10 @@ export function IssueDetailClient({
                   {comment.authorId === currentUserId && (
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => { setEditingCommentId(comment.id); setEditCommentBody(comment.body); }}
+                        onClick={() => {
+                          setEditingCommentId(comment.id);
+                          setEditCommentBody(comment.body);
+                        }}
                         className="rounded p-1 text-muted-foreground hover:text-foreground"
                       >
                         <Pencil className="h-3 w-3" />
@@ -354,8 +456,21 @@ export function IssueDetailClient({
                       className="resize-none text-sm"
                     />
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={() => handleUpdateComment(comment.id)} className="h-7 text-xs">Save</Button>
-                      <Button size="sm" variant="ghost" onClick={() => setEditingCommentId(null)} className="h-7 text-xs">Cancel</Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleUpdateComment(comment.id)}
+                        className="h-7 text-xs"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setEditingCommentId(null)}
+                        className="h-7 text-xs"
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -380,14 +495,30 @@ export function IssueDetailClient({
               <span className="text-xs text-muted-foreground">Status</span>
               <MetaSelect
                 value={issue.status}
-                options={["backlog", "todo", "in_progress", "in_review", "done", "cancelled"] as IssueStatus[]}
+                options={
+                  [
+                    "backlog",
+                    "todo",
+                    "in_progress",
+                    "in_review",
+                    "done",
+                    "cancelled",
+                  ] as IssueStatus[]
+                }
                 onChange={handleStatusChange}
                 renderOption={(s) => {
                   const { Icon, color, label } = STATUS_META[s];
-                  return <><Icon className={cn("h-3.5 w-3.5", color)} /><span>{label}</span></>;
+                  return (
+                    <>
+                      <Icon className={cn("h-3.5 w-3.5", color)} />
+                      <span>{label}</span>
+                    </>
+                  );
                 }}
               >
-                <span className={cn("flex h-5 w-5 items-center justify-center rounded", statusMeta.bg)}>
+                <span
+                  className={cn("flex h-5 w-5 items-center justify-center rounded", statusMeta.bg)}
+                >
                   <StatusIcon className={cn("h-3 w-3", statusMeta.color)} />
                 </span>
                 <span className="text-xs font-medium">{statusMeta.label}</span>
@@ -403,7 +534,12 @@ export function IssueDetailClient({
                 onChange={handlePriorityChange}
                 renderOption={(p) => {
                   const { Icon, color, label } = PRIORITY_META[p];
-                  return <><Icon className={cn("h-3.5 w-3.5", color)} /><span>{label}</span></>;
+                  return (
+                    <>
+                      <Icon className={cn("h-3.5 w-3.5", color)} />
+                      <span>{label}</span>
+                    </>
+                  );
                 }}
               >
                 <PriorityIcon className={cn("h-3.5 w-3.5", priorityMeta.color)} />
@@ -417,7 +553,11 @@ export function IssueDetailClient({
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Calendar className="h-3.5 w-3.5" />
                 {issue.dueDate
-                  ? new Date(issue.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                  ? new Date(issue.dueDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
                   : "None"}
               </span>
             </div>
@@ -426,7 +566,10 @@ export function IssueDetailClient({
             <div className="flex items-center justify-between rounded-md px-2 py-1.5">
               <span className="text-xs text-muted-foreground">Created</span>
               <span className="text-xs text-muted-foreground">
-                {new Date(issue.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {new Date(issue.createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })}
               </span>
             </div>
           </div>

@@ -6,8 +6,17 @@ import { useParams } from "next/navigation";
 import { updateIssue } from "@/server/actions/issue.actions";
 import { cn } from "@/lib/cn";
 import {
-  CircleDot, Circle, Timer, Eye, CheckCircle2, Ban,
-  AlertCircle, ArrowUp, Minus, ArrowDown, ChevronRight,
+  CircleDot,
+  Circle,
+  Timer,
+  Eye,
+  CheckCircle2,
+  Ban,
+  AlertCircle,
+  ArrowUp,
+  Minus,
+  ArrowDown,
+  ChevronRight,
 } from "lucide-react";
 import type { IssueStatus, IssuePriority } from "@/types";
 
@@ -23,24 +32,33 @@ type Issue = {
 };
 
 const STATUS_COLUMNS: IssueStatus[] = [
-  "backlog", "todo", "in_progress", "in_review", "done", "cancelled",
+  "backlog",
+  "todo",
+  "in_progress",
+  "in_review",
+  "done",
+  "cancelled",
 ];
 
-const STATUS_META: Record<IssueStatus, { label: string; Icon: React.ElementType; color: string }> = {
-  backlog:     { label: "Backlog",     Icon: CircleDot,     color: "text-slate-400" },
-  todo:        { label: "Todo",        Icon: Circle,        color: "text-blue-400" },
-  in_progress: { label: "In Progress", Icon: Timer,         color: "text-amber-400" },
-  in_review:   { label: "In Review",   Icon: Eye,           color: "text-violet-400" },
-  done:        { label: "Done",        Icon: CheckCircle2,  color: "text-emerald-400" },
-  cancelled:   { label: "Cancelled",   Icon: Ban,           color: "text-slate-500" },
-};
+const STATUS_META: Record<IssueStatus, { label: string; Icon: React.ElementType; color: string }> =
+  {
+    backlog: { label: "Backlog", Icon: CircleDot, color: "text-slate-400" },
+    todo: { label: "Todo", Icon: Circle, color: "text-blue-400" },
+    in_progress: { label: "In Progress", Icon: Timer, color: "text-amber-400" },
+    in_review: { label: "In Review", Icon: Eye, color: "text-violet-400" },
+    done: { label: "Done", Icon: CheckCircle2, color: "text-emerald-400" },
+    cancelled: { label: "Cancelled", Icon: Ban, color: "text-slate-500" },
+  };
 
-const PRIORITY_META: Record<IssuePriority, { label: string; Icon: React.ElementType; color: string }> = {
+const PRIORITY_META: Record<
+  IssuePriority,
+  { label: string; Icon: React.ElementType; color: string }
+> = {
   urgent: { label: "Urgent", Icon: AlertCircle, color: "text-red-400" },
-  high:   { label: "High",   Icon: ArrowUp,     color: "text-orange-400" },
-  medium: { label: "Medium", Icon: Minus,       color: "text-amber-400" },
-  low:    { label: "Low",    Icon: ArrowDown,   color: "text-blue-400" },
-  none:   { label: "None",   Icon: Minus,       color: "text-slate-500" },
+  high: { label: "High", Icon: ArrowUp, color: "text-orange-400" },
+  medium: { label: "Medium", Icon: Minus, color: "text-amber-400" },
+  low: { label: "Low", Icon: ArrowDown, color: "text-blue-400" },
+  none: { label: "None", Icon: Minus, color: "text-slate-500" },
 };
 
 function StatusIcon({ status, className }: { status: IssueStatus; className?: string }) {
@@ -86,6 +104,7 @@ function IssueCard({
         "group relative rounded-[10px] border border-border/40 bg-card/40 p-3.5 transition-all duration-200",
         "hover:border-border/80 hover:bg-card/60 hover:shadow-md hover:-translate-y-[1px]",
         isPending && "opacity-60",
+        menuOpen && "z-50"
       )}
     >
       {/* Priority + Title row */}
@@ -132,7 +151,10 @@ function IssueCard({
                 isOverdue ? "text-red-400 font-medium" : "text-muted-foreground",
               )}
             >
-              {new Date(issue.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              {new Date(issue.dueDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
             </span>
           )}
 
@@ -151,10 +173,7 @@ function IssueCard({
 
             {menuOpen && (
               <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setMenuOpen(false)}
-                />
+                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
                 <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
                   {STATUS_COLUMNS.map((s) => (
                     <button
@@ -237,9 +256,7 @@ export function IssueBoard({ issues }: { issues: Issue[] }) {
 
   const handleStatusChange = async (issueId: string, status: IssueStatus) => {
     // Optimistic update
-    setOptimistic((prev) =>
-      prev.map((i) => (i.id === issueId ? { ...i, status } : i)),
-    );
+    setOptimistic((prev) => prev.map((i) => (i.id === issueId ? { ...i, status } : i)));
     const result = await updateIssue({ issueId, workspaceSlug, status });
     if (!result.success) {
       // Revert on failure

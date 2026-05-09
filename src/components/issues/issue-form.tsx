@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertCircle, ArrowUp, Minus, ArrowDown, X } from "lucide-react";
@@ -14,20 +18,25 @@ import { cn } from "@/lib/cn";
 import type { IssueStatus, IssuePriority } from "@/types";
 
 const STATUSES: { value: IssueStatus; label: string }[] = [
-  { value: "backlog",     label: "Backlog" },
-  { value: "todo",        label: "Todo" },
+  { value: "backlog", label: "Backlog" },
+  { value: "todo", label: "Todo" },
   { value: "in_progress", label: "In Progress" },
-  { value: "in_review",   label: "In Review" },
-  { value: "done",        label: "Done" },
-  { value: "cancelled",   label: "Cancelled" },
+  { value: "in_review", label: "In Review" },
+  { value: "done", label: "Done" },
+  { value: "cancelled", label: "Cancelled" },
 ];
 
-const PRIORITIES: { value: IssuePriority; label: string; Icon: React.ElementType; color: string }[] = [
+const PRIORITIES: {
+  value: IssuePriority;
+  label: string;
+  Icon: React.ElementType;
+  color: string;
+}[] = [
   { value: "urgent", label: "Urgent", Icon: AlertCircle, color: "text-red-400" },
-  { value: "high",   label: "High",   Icon: ArrowUp,     color: "text-orange-400" },
-  { value: "medium", label: "Medium", Icon: Minus,       color: "text-amber-400" },
-  { value: "low",    label: "Low",    Icon: ArrowDown,   color: "text-blue-400" },
-  { value: "none",   label: "None",   Icon: Minus,       color: "text-slate-400" },
+  { value: "high", label: "High", Icon: ArrowUp, color: "text-orange-400" },
+  { value: "medium", label: "Medium", Icon: Minus, color: "text-amber-400" },
+  { value: "low", label: "Low", Icon: ArrowDown, color: "text-blue-400" },
+  { value: "none", label: "None", Icon: Minus, color: "text-slate-400" },
 ];
 
 type Props = {
@@ -38,7 +47,13 @@ type Props = {
   onSuccess?: () => void;
 };
 
-export function IssueFormDialog({ workspaceSlug, projectId, open, onOpenChange, onSuccess }: Props) {
+export function IssueFormDialog({
+  workspaceSlug,
+  projectId,
+  open,
+  onOpenChange,
+  onSuccess,
+}: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<IssueStatus>("backlog");
@@ -82,7 +97,13 @@ export function IssueFormDialog({ workspaceSlug, projectId, open, onOpenChange, 
   const selectedPriority = PRIORITIES.find((p) => p.value === priority)!;
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) reset(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        onOpenChange(v);
+        if (!v) reset();
+      }}
+    >
       <DialogContent hideCloseButton className="gap-0 p-0 max-w-lg">
         <DialogHeader className="border-b border-border/60 px-5 py-4">
           <div className="flex items-center justify-between">
