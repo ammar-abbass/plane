@@ -42,7 +42,7 @@ type Issue = {
   status: IssueStatus;
   priority: IssuePriority;
   assigneeId: string | null;
-  dueDate: Date | null;
+  dueDate: string | null;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -103,14 +103,21 @@ function MetaSelect<T extends string>({
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setOpen((v) => !v);
+        }}
         className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors hover:bg-accent"
       >
         {children}
       </button>
       {open && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => {
+              setOpen(false);
+            }}
+          />
           <div className="absolute left-0 top-full z-20 mt-1 min-w-[140px] overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
             {options.map((opt) => (
               <button
@@ -205,7 +212,7 @@ export function IssueDetailClient({
     }
   };
 
-  const handleAddComment = async (e: React.FormEvent) => {
+  const handleAddComment = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!commentBody.trim()) return;
     const result = await addComment({ issueId: issue.id, workspaceSlug, body: commentBody });
@@ -247,7 +254,7 @@ export function IssueDetailClient({
     }
   };
 
-  const handleDeleteIssue = async () => {
+  const handleDeleteIssue = () => {
     startTransition(async () => {
       const result = await deleteIssue({ issueId: issue.id, workspaceSlug });
       if (result.success) {
@@ -271,7 +278,12 @@ export function IssueDetailClient({
           <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             {error}
-            <button onClick={() => setError(null)} className="ml-auto">
+            <button
+              onClick={() => {
+                setError(null);
+              }}
+              className="ml-auto"
+            >
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -284,13 +296,15 @@ export function IssueDetailClient({
               <textarea
                 className="flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2 text-lg font-semibold focus:outline-none focus:ring-1 focus:ring-ring"
                 value={titleDraft}
-                onChange={(e) => setTitleDraft(e.target.value)}
+                onChange={(e) => {
+                  setTitleDraft(e.target.value);
+                }}
                 rows={2}
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    handleTitleSave();
+                    void handleTitleSave();
                   }
                   if (e.key === "Escape") setEditingTitle(false);
                 }}
@@ -335,7 +349,9 @@ export function IssueDetailClient({
             <div className="space-y-2">
               <Textarea
                 value={descDraft}
-                onChange={(e) => setDescDraft(e.target.value)}
+                onChange={(e) => {
+                  setDescDraft(e.target.value);
+                }}
                 rows={5}
                 autoFocus
                 className="resize-none text-sm"
@@ -360,7 +376,9 @@ export function IssueDetailClient({
           ) : (
             <div
               className="group min-h-[60px] cursor-text rounded-lg p-2 text-sm text-foreground/80 hover:bg-accent/40 transition-colors"
-              onClick={() => setEditingDesc(true)}
+              onClick={() => {
+                setEditingDesc(true);
+              }}
             >
               {issue.description || (
                 <span className="text-muted-foreground/40">Add description…</span>
@@ -400,7 +418,9 @@ export function IssueDetailClient({
             <Textarea
               placeholder="Write a comment…"
               value={commentBody}
-              onChange={(e) => setCommentBody(e.target.value)}
+              onChange={(e) => {
+                setCommentBody(e.target.value);
+              }}
               rows={2}
               className="resize-none text-sm"
             />
@@ -450,7 +470,9 @@ export function IssueDetailClient({
                   <div className="space-y-2">
                     <Textarea
                       value={editCommentBody}
-                      onChange={(e) => setEditCommentBody(e.target.value)}
+                      onChange={(e) => {
+                        setEditCommentBody(e.target.value);
+                      }}
                       rows={2}
                       autoFocus
                       className="resize-none text-sm"
@@ -466,7 +488,9 @@ export function IssueDetailClient({
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setEditingCommentId(null)}
+                        onClick={() => {
+                          setEditingCommentId(null);
+                        }}
                         className="h-7 text-xs"
                       >
                         Cancel

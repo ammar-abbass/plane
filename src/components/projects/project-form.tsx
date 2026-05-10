@@ -29,7 +29,7 @@ export function ProjectForm({
     setError(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -54,7 +54,9 @@ export function ProjectForm({
       <Button
         variant="premium"
         size="sm"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+        }}
         className="h-7 gap-1.5 px-3 text-xs"
       >
         <Plus className="h-3.5 w-3.5" />
@@ -73,7 +75,9 @@ export function ProjectForm({
             <div className="flex items-center justify-between">
               <DialogTitle className="text-sm font-semibold">Create Project</DialogTitle>
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                }}
                 className="rounded-md p-1 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
@@ -86,7 +90,9 @@ export function ProjectForm({
                 <label className="text-xs font-medium text-muted-foreground">Project name</label>
                 <Input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
                   required
                   maxLength={100}
                   placeholder="e.g. Backend API"
@@ -99,7 +105,9 @@ export function ProjectForm({
                 </label>
                 <Textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                  }}
                   maxLength={500}
                   rows={2}
                   placeholder="What is this project about?"
@@ -118,7 +126,9 @@ export function ProjectForm({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                }}
                 className="h-7 text-xs"
               >
                 Cancel

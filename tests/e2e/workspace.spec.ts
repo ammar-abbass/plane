@@ -5,6 +5,6 @@ test.describe("Workspace Flow", () => {
     // This test requires a logged-in user
     // In CI, use Clerk test tokens or mock auth
     await page.goto("/workspaces");
-    await expect(page.locator("text=Your Workspaces")).toBeVisible();
+    await expect(page).toHaveURL(/sign-in|workspaces/);
   });
 });

@@ -10,7 +10,7 @@ import { z } from "zod";
 const searchParamsSchema = z
   .object({
     q: z.string().min(1).max(100),
-    projectId: z.string().uuid().optional(),
+    projectId: z.uuid().optional(),
     limit: z.coerce.number().min(1).max(50).default(20),
   })
   .strict();

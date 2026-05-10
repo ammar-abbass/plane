@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
 type HeaderProps = {
-  onSearch?: () => void;
-  onNewIssue?: () => void;
+  onSearch?: (() => void) | undefined;
+  onNewIssue?: (() => void) | undefined;
   title?: string;
   className?: string;
 };
@@ -49,7 +49,7 @@ export function Header({ onSearch, onNewIssue, title, className }: HeaderProps) 
             New Issue
           </Button>
         )}
-        <UserButton afterSignOutUrl="/sign-in" />
+        <UserButton />
       </div>
     </header>
   );

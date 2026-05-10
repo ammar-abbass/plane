@@ -43,7 +43,7 @@ export function DeleteProjectButton({
         <Button
           variant="destructive"
           size="sm"
-          onClick={() => setOpen(true)}
+          onClick={() => { setOpen(true); }}
           className="h-7 shrink-0 gap-1.5 text-xs"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -68,7 +68,7 @@ export function DeleteProjectButton({
             )}
           </div>
           <div className="flex justify-end gap-2 border-t border-border/60 px-5 py-3">
-            <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="h-7 text-xs">
+            <Button variant="ghost" size="sm" onClick={() => { setOpen(false); }} className="h-7 text-xs">
               Cancel
             </Button>
             <Button

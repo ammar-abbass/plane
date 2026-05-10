@@ -1,7 +1,6 @@
 import { db } from "@/server/db";
 import { issues, issueLabels, labels, comments, activityLog } from "@/server/db/schema";
-import { eq, and, desc, inArray } from "drizzle-orm";
-import type { IssueStatus, IssuePriority } from "@/types";
+import { eq, desc, inArray } from "drizzle-orm";
 
 export async function getIssuesByProject(projectId: string) {
   return db

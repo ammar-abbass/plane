@@ -161,7 +161,7 @@ function IssueCard({
           {/* Status button */}
           <div className="relative">
             <button
-              onClick={() => setMenuOpen((v) => !v)}
+              onClick={() => { setMenuOpen((v) => !v); }}
               className={cn(
                 "flex items-center gap-1 rounded-md border border-border/50 bg-muted/40 px-1.5 py-0.5",
                 "text-[10px] font-medium transition-colors hover:bg-accent",
@@ -173,12 +173,12 @@ function IssueCard({
 
             {menuOpen && (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                <div className="fixed inset-0 z-10" onClick={() => { setMenuOpen(false); }} />
                 <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
                   {STATUS_COLUMNS.map((s) => (
                     <button
                       key={s}
-                      onClick={() => handleStatusChange(s)}
+                      onClick={() => { handleStatusChange(s); }}
                       className={cn(
                         "flex w-full items-center gap-2 px-3 py-1.5 text-xs transition-colors hover:bg-accent",
                         s === issue.status && "bg-accent/60",
@@ -278,7 +278,7 @@ export function IssueBoard({ issues }: { issues: Issue[] }) {
         <KanbanColumn
           key={status}
           status={status}
-          issues={issuesByStatus[status] ?? []}
+          issues={issuesByStatus[status]}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           onStatusChange={handleStatusChange}

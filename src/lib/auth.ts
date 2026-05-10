@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/server/db";
 import { workspaces, workspaceMembers } from "@/server/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -48,9 +47,9 @@ export async function requireWorkspaceMember(
     throw new PlaneError("FORBIDDEN", "You do not have access to this workspace.", 403);
   }
 
-  if (minimumRole && !hasMinimumRole(membership.role as WorkspaceRole, minimumRole)) {
+  if (minimumRole && !hasMinimumRole(membership.role, minimumRole)) {
     throw new PlaneError("FORBIDDEN", "You do not have permission to perform this action.", 403);
   }
 
-  return { ...membership, role: membership.role as WorkspaceRole };
+  return { ...membership, role: membership.role };
 }

@@ -39,8 +39,8 @@ export async function broadcastIssueUpdate(
   const channel = `${CHANNEL_PREFIX}:${workspaceSlug}:issues`;
 
   try {
-    const subscribers = await redis.smembers<string[]>(subscribersKey);
-    if (!subscribers || subscribers.length === 0) return;
+    const subscribers = await redis.smembers(subscribersKey);
+    if (subscribers.length === 0) return;
 
     const payload = JSON.stringify(update);
     const pipeline = redis.pipeline();

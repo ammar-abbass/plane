@@ -1,4 +1,4 @@
-import type { Result, ErrorCode } from "@/types";
+import type { Result } from "@/types";
 import { PlaneError } from "./errors";
 import { logger } from "./logger";
 

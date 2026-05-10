@@ -16,7 +16,10 @@ export function encodeCursor(id: string, createdAt: Date): string {
 export function decodeCursor(cursor: string): { id: string; createdAt: Date } | null {
   try {
     const decoded = Buffer.from(cursor, "base64").toString("utf-8");
-    const [id, iso] = decoded.split(":");
+    const sep = decoded.indexOf(":");
+    if (sep === -1) return null;
+    const id = decoded.slice(0, sep);
+    const iso = decoded.slice(sep + 1);
     if (!id || !iso) return null;
     const createdAt = new Date(iso);
     if (Number.isNaN(createdAt.getTime())) return null;

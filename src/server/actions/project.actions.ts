@@ -18,26 +18,26 @@ const createProjectSchema = z.object({
 }).catchall(z.never());
 
 const updateProjectSchema = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.uuid(),
   workspaceSlug: z.string().min(1),
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
 }).catchall(z.never());
 
 const deleteProjectSchema = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.uuid(),
   workspaceSlug: z.string().min(1),
 }).catchall(z.never());
 
 const createLabelSchema = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.uuid(),
   workspaceSlug: z.string().min(1),
   name: z.string().min(1).max(50),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
 }).catchall(z.never());
 
 const deleteLabelSchema = z.object({
-  labelId: z.string().uuid(),
+  labelId: z.uuid(),
   workspaceSlug: z.string().min(1),
 }).catchall(z.never());
 
@@ -70,6 +70,7 @@ export async function createProject(input: unknown): Promise<Result<{ id: string
         createdBy: userId,
       })
       .returning({ id: projects.id, name: projects.name, slug: projects.slug });
+    if (!project) throw new PlaneError("INTERNAL_ERROR", "Failed to create project.");
 
     return project;
   });
@@ -102,6 +103,7 @@ export async function updateProject(input: unknown): Promise<Result<{ id: string
       })
       .where(eq(projects.id, parsed.projectId))
       .returning({ id: projects.id, name: projects.name, slug: projects.slug });
+    if (!updated) throw new PlaneError("INTERNAL_ERROR", "Failed to update project.");
 
     return updated;
   });
@@ -159,6 +161,7 @@ export async function createLabel(input: unknown): Promise<Result<{ id: string; 
       .insert(labels)
       .values({ projectId: parsed.projectId, name: parsed.name, color: parsed.color })
       .returning({ id: labels.id, name: labels.name, color: labels.color });
+    if (!label) throw new PlaneError("INTERNAL_ERROR", "Failed to create label.");
 
     return label;
   });

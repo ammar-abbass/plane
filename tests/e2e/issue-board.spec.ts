@@ -20,7 +20,10 @@ class IssueBoardPage {
 
   async changeIssueStatus(title: string, newStatus: string) {
     const card = await this.getIssueCardByTitle(title);
-    await card.locator("..").locator("button", { hasText: /(Backlog|Todo|In Progress|In Review|Done|Cancelled)/ }).click();
+    await card
+      .locator("..")
+      .locator("button", { hasText: /(Backlog|Todo|In Progress|In Review|Done|Cancelled)/ })
+      .click();
     await this.page.getByText(newStatus).click();
   }
 }
@@ -41,7 +44,7 @@ test.describe("Issue Board", () => {
 
 test.describe("Issue Board - Page Object", () => {
   test("should use POM to interact with board", async ({ page }) => {
-    const board = new IssueBoardPage(page);
+    // const board = new IssueBoardPage(page);
     // Auth guard — we verify the redirect works, not the full auth flow
     await page.goto("/workspaces/test/projects/test");
     await expect(page).toHaveURL(/sign-in|workspaces/);

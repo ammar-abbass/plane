@@ -13,7 +13,7 @@ export function CreateWorkspaceForm() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -32,7 +32,9 @@ export function CreateWorkspaceForm() {
         <Input
           placeholder="New workspace name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
           required
           maxLength={100}
           className="flex-1"

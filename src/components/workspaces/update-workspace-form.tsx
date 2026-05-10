@@ -20,7 +20,7 @@ export function UpdateWorkspaceForm({
   const [saved, setSaved] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -41,7 +41,10 @@ export function UpdateWorkspaceForm({
         <label className="text-xs font-medium text-muted-foreground">Workspace name</label>
         <Input
           value={name}
-          onChange={(e) => { setName(e.target.value); setSaved(false); }}
+          onChange={(e) => {
+            setName(e.target.value);
+            setSaved(false);
+          }}
           required
           maxLength={100}
           className="max-w-sm"

@@ -17,7 +17,7 @@ type Issue = {
   status: IssueStatus;
   priority: IssuePriority;
   assigneeId: string | null;
-  dueDate: Date | null;
+  dueDate: string | null;
   labels: { id: string; name: string; color: string }[];
 };
 
@@ -35,22 +35,22 @@ export function ProjectPageClient({ project, issues, workspaceSlug, canCreateIss
   useIssueStream(workspaceSlug);
 
   const { data: realtimeIssues } = useQuery({
-    queryKey: ["issues", project.id],
-    queryFn: () => issues, // mock fetcher; we rely on initialData + SSE cache updates
+    queryKey: ["issues", project.id, issues],
+    queryFn: () => issues,
     initialData: issues,
   });
 
   useKeyboardShortcuts({
-    onNewIssue: canCreateIssues ? () => setIssueFormOpen(true) : undefined,
-    onSearch: () => setSearchOpen(true),
+    onNewIssue: canCreateIssues ? () => { setIssueFormOpen(true); } : undefined,
+    onSearch: () => { setSearchOpen(true); },
   });
 
   return (
     <div className="flex flex-col h-full">
       <Header
         title={project.name}
-        onSearch={() => setSearchOpen(true)}
-        onNewIssue={canCreateIssues ? () => setIssueFormOpen(true) : undefined}
+        onSearch={() => { setSearchOpen(true); }}
+        onNewIssue={canCreateIssues ? () => { setIssueFormOpen(true); } : undefined}
       />
 
       <div className="flex-1 min-h-0 p-5 overflow-hidden">

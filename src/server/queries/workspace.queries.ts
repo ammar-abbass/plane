@@ -1,7 +1,6 @@
 import { db } from "@/server/db";
 import { workspaces, workspaceMembers } from "@/server/db/schema";
-import { eq, and } from "drizzle-orm";
-import { PlaneError } from "@/lib/errors";
+import { eq } from "drizzle-orm";
 
 export async function getWorkspaceBySlug(slug: string) {
   const [workspace] = await db

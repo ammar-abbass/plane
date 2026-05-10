@@ -94,7 +94,7 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
 
   useEffect(() => {
     const timer = setTimeout(() => search(query), 150);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); };
   }, [query, search]);
 
   useEffect(() => {
@@ -136,13 +136,13 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
             placeholder="Search issues…"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); }}
             onKeyDown={handleKeyDown}
             autoFocus
           />
           {query && (
             <button
-              onClick={() => setQuery("")}
+              onClick={() => { setQuery(""); }}
               className="rounded p-0.5 text-muted-foreground hover:text-foreground"
             >
               <span className="text-xs">✕</span>
@@ -177,8 +177,8 @@ export function CommandPalette({ workspaceSlug, open, onOpenChange }: Props) {
             return (
               <button
                 key={result.id}
-                onClick={() => navigate(result)}
-                onMouseEnter={() => setSelected(idx)}
+                onClick={() => { navigate(result); }}
+                onMouseEnter={() => { setSelected(idx); }}
                 className={cn(
                   "flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors",
                   selected === idx ? "bg-accent" : "hover:bg-accent/50",

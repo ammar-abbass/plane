@@ -26,7 +26,7 @@ export function UpdateProjectForm({
   const [saved, setSaved] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -52,7 +52,10 @@ export function UpdateProjectForm({
         <label className="text-xs font-medium text-muted-foreground">Project name</label>
         <Input
           value={name}
-          onChange={(e) => { setName(e.target.value); setSaved(false); }}
+          onChange={(e) => {
+            setName(e.target.value);
+            setSaved(false);
+          }}
           required
           maxLength={100}
           className="max-w-sm"
@@ -62,7 +65,10 @@ export function UpdateProjectForm({
         <label className="text-xs font-medium text-muted-foreground">Description (optional)</label>
         <Textarea
           value={description}
-          onChange={(e) => { setDescription(e.target.value); setSaved(false); }}
+          onChange={(e) => {
+            setDescription(e.target.value);
+            setSaved(false);
+          }}
           maxLength={500}
           rows={2}
           className="max-w-sm resize-none"

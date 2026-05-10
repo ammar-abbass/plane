@@ -22,7 +22,7 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -47,11 +47,18 @@ export function InviteMemberForm({ workspaceSlug }: { workspaceSlug: string }) {
           type="email"
           placeholder="Email address"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
           required
           className="flex-1 text-sm"
         />
-        <Select value={role} onValueChange={(v) => setRole(v as typeof role)}>
+        <Select
+          value={role}
+          onValueChange={(v) => {
+            setRole(v as typeof role);
+          }}
+        >
           <SelectTrigger className="h-9 w-28 text-xs">
             <SelectValue />
           </SelectTrigger>

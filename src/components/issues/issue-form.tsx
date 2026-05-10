@@ -71,7 +71,7 @@ export function IssueFormDialog({
     setError(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -109,7 +109,9 @@ export function IssueFormDialog({
           <div className="flex items-center justify-between">
             <DialogTitle className="text-sm font-semibold">Create Issue</DialogTitle>
             <button
-              onClick={() => onOpenChange(false)}
+              onClick={() => {
+                onOpenChange(false);
+              }}
               className="rounded-md p-1 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-4 w-4" />
@@ -123,7 +125,9 @@ export function IssueFormDialog({
             <Input
               placeholder="Issue title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
               required
               maxLength={255}
               className="border-0 px-0 text-sm font-medium placeholder:text-muted-foreground/50 focus-visible:ring-0 h-auto text-base"
@@ -134,7 +138,9 @@ export function IssueFormDialog({
             <Textarea
               placeholder="Add description… (optional)"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
               maxLength={5000}
               rows={3}
               className="resize-none border-0 px-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0"
@@ -143,7 +149,12 @@ export function IssueFormDialog({
             {/* Metadata row */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
               {/* Status */}
-              <Select value={status} onValueChange={(v) => setStatus(v as IssueStatus)}>
+              <Select
+                value={status}
+                onValueChange={(v) => {
+                  setStatus(v as IssueStatus);
+                }}
+              >
                 <SelectTrigger className="h-7 w-auto gap-1.5 rounded-md border-border/60 px-2 text-xs font-medium">
                   <SelectValue />
                 </SelectTrigger>
@@ -157,7 +168,12 @@ export function IssueFormDialog({
               </Select>
 
               {/* Priority */}
-              <Select value={priority} onValueChange={(v) => setPriority(v as IssuePriority)}>
+              <Select
+                value={priority}
+                onValueChange={(v) => {
+                  setPriority(v as IssuePriority);
+                }}
+              >
                 <SelectTrigger className="h-7 w-auto gap-1.5 rounded-md border-border/60 px-2 text-xs font-medium">
                   <selectedPriority.Icon className={cn("h-3 w-3", selectedPriority.color)} />
                   <SelectValue />
@@ -178,7 +194,9 @@ export function IssueFormDialog({
               <input
                 type="date"
                 value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+                onChange={(e) => {
+                  setDueDate(e.target.value);
+                }}
                 className="h-7 rounded-md border border-border/60 bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
@@ -196,7 +214,9 @@ export function IssueFormDialog({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => onOpenChange(false)}
+              onClick={() => {
+                onOpenChange(false);
+              }}
               className="h-7 px-3 text-xs"
             >
               Cancel

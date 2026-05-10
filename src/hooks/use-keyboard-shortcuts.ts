@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 
 type Options = {
-  onNewIssue?: () => void;
-  onSearch?: () => void;
+  onNewIssue?: (() => void) | undefined;
+  onSearch?: (() => void) | undefined;
 };
 
 export function useKeyboardShortcuts({ onNewIssue, onSearch }: Options) {
@@ -33,6 +33,6 @@ export function useKeyboardShortcuts({ onNewIssue, onSearch }: Options) {
     };
 
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    return () => { window.removeEventListener("keydown", handler); };
   }, [onNewIssue, onSearch]);
 }

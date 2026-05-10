@@ -5,7 +5,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { db } from "@/server/db";
 import { workspaces, workspaceMembers } from "@/server/db/schema";
 import { eq, and } from "drizzle-orm";
-import { requireWorkspaceMember, hasMinimumRole } from "@/lib/auth";
+import { requireWorkspaceMember } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
 import { PlaneError } from "@/lib/errors";
 import { tryCatch } from "@/lib/result";
@@ -22,19 +22,19 @@ const updateWorkspaceSchema = z.object({
 
 const inviteMemberSchema = z.object({
   workspaceSlug: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   role: z.enum(["admin", "member", "viewer"]),
 }).catchall(z.never());
 
 const updateMemberRoleSchema = z.object({
   workspaceSlug: z.string().min(1),
-  memberId: z.string().uuid(),
+  memberId: z.uuid(),
   role: z.enum(["admin", "member", "viewer"]),
 }).catchall(z.never());
 
 const removeMemberSchema = z.object({
   workspaceSlug: z.string().min(1),
-  memberId: z.string().uuid(),
+  memberId: z.uuid(),
 }).catchall(z.never());
 
 export async function createWorkspace(input: unknown): Promise<Result<{ id: string; name: string; slug: string }>> {
@@ -53,6 +53,7 @@ export async function createWorkspace(input: unknown): Promise<Result<{ id: stri
       .insert(workspaces)
       .values({ name: parsed.name, slug, ownerId: userId })
       .returning({ id: workspaces.id, name: workspaces.name, slug: workspaces.slug });
+    if (!workspace) throw new PlaneError("INTERNAL_ERROR", "Failed to create workspace.");
 
     await db.insert(workspaceMembers).values({
       workspaceId: workspace.id,
@@ -77,6 +78,7 @@ export async function updateWorkspace(input: unknown): Promise<Result<{ id: stri
       .set({ name: parsed.name, updatedAt: new Date() })
       .where(eq(workspaces.id, member.workspaceId))
       .returning({ id: workspaces.id, name: workspaces.name, slug: workspaces.slug });
+    if (!updated) throw new PlaneError("INTERNAL_ERROR", "Failed to update workspace.");
 
     return updated;
   });
@@ -107,7 +109,9 @@ export async function inviteMember(input: unknown): Promise<Result<{ id: string;
       throw new PlaneError("NOT_FOUND", "User with this email not found in the system.", 404);
     }
 
-    const targetUserId = users.data[0].id;
+    const targetUser = users.data[0];
+    if (!targetUser) throw new PlaneError("NOT_FOUND", "User with this email not found.", 404);
+    const targetUserId = targetUser.id;
 
     const existing = await db
       .select({ id: workspaceMembers.id })
@@ -128,8 +132,9 @@ export async function inviteMember(input: unknown): Promise<Result<{ id: string;
         invitedBy: userId,
       })
       .returning({ id: workspaceMembers.id, userId: workspaceMembers.userId, role: workspaceMembers.role });
+    if (!newMember) throw new PlaneError("INTERNAL_ERROR", "Failed to add member.");
 
-    return { ...newMember, role: newMember.role as WorkspaceRole };
+    return { ...newMember, role: newMember.role };
   });
 }
 
@@ -139,7 +144,7 @@ export async function updateMemberRole(input: unknown): Promise<Result<{ id: str
     if (!userId) throw new PlaneError("UNAUTHENTICATED", "Not signed in.", 401);
 
     const parsed = updateMemberRoleSchema.parse(input);
-    const member = await requireWorkspaceMember(parsed.workspaceSlug, userId, "admin");
+    const _member = await requireWorkspaceMember(parsed.workspaceSlug, userId, "admin");
 
     const [target] = await db
       .select({ id: workspaceMembers.id, role: workspaceMembers.role })
@@ -155,8 +160,9 @@ export async function updateMemberRole(input: unknown): Promise<Result<{ id: str
       .set({ role: parsed.role })
       .where(eq(workspaceMembers.id, parsed.memberId))
       .returning({ id: workspaceMembers.id, role: workspaceMembers.role });
+    if (!updated) throw new PlaneError("INTERNAL_ERROR", "Failed to update member role.");
 
-    return { ...updated, role: updated.role as WorkspaceRole };
+    return { ...updated, role: updated.role };
   });
 }
 
@@ -166,7 +172,7 @@ export async function removeMember(input: unknown): Promise<Result<void>> {
     if (!userId) throw new PlaneError("UNAUTHENTICATED", "Not signed in.", 401);
 
     const parsed = removeMemberSchema.parse(input);
-    const member = await requireWorkspaceMember(parsed.workspaceSlug, userId, "admin");
+    const _member = await requireWorkspaceMember(parsed.workspaceSlug, userId, "admin");
 
     const [target] = await db
       .select({ id: workspaceMembers.id, role: workspaceMembers.role })

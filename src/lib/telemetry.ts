@@ -1,4 +1,4 @@
-import { trace, context, SpanStatusCode, type Span } from "@opentelemetry/api";
+import { trace, context, SpanStatusCode, type Span, type Attributes } from "@opentelemetry/api";
 
 const TRACER_NAME = "plane-sse";
 
@@ -6,9 +6,11 @@ export function getTracer() {
   return trace.getTracer(TRACER_NAME, "1.0.0");
 }
 
-export function startSpan(name: string, attributes?: Record<string, string | number | boolean>) {
+export function startSpan(name: string, attributes?: Attributes) {
   const tracer = getTracer();
-  const span = tracer.startSpan(name, { attributes });
+  const options: Record<string, unknown> = {};
+  if (attributes) options.attributes = attributes;
+  const span = tracer.startSpan(name, options);
   return span;
 }
 

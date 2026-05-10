@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 // Test the optimistic update logic in isolation (pure function extraction)
 // The actual hook uses React — we test the update logic directly.
@@ -18,10 +18,7 @@ function applyOptimisticStatusChange(
   return issues.map((i) => (i.id === issueId ? { ...i, status: newStatus } : i));
 }
 
-function revertOptimistic(
-  _current: Issue[],
-  original: Issue[],
-): Issue[] {
+function revertOptimistic(_current: Issue[], original: Issue[]): Issue[] {
   return original;
 }
 

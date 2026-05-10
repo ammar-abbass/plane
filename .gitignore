@@ -50,6 +50,7 @@ drizzle/migrations/*
 test-results/
 playwright-report/
 docs/SPEC.md
+docs/GUIDELINES.md
 
 # Spec (internal engineering doc)
 docs/SPEC.md

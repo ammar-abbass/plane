@@ -9,68 +9,68 @@ import { requireWorkspaceMember } from "@/lib/auth";
 import { PlaneError } from "@/lib/errors";
 import { tryCatch } from "@/lib/result";
 import { broadcastIssueUpdate } from "@/lib/realtime";
-import type { Result, IssueStatus, IssuePriority, ActivityAction } from "@/types";
+import type { Result, ActivityAction } from "@/types";
 
 const MAX_ISSUE_TITLE_LENGTH = 255;
 
 const createIssueSchema = z.object({
   workspaceSlug: z.string().min(1),
-  projectId: z.string().uuid(),
+  projectId: z.uuid(),
   title: z.string().min(1).max(MAX_ISSUE_TITLE_LENGTH),
   description: z.string().max(5000).nullish(),
   status: z.enum(["backlog", "todo", "in_progress", "in_review", "done", "cancelled"]).optional(),
   priority: z.enum(["urgent", "high", "medium", "low", "none"]).optional(),
   assigneeId: z.string().min(1).optional(),
-  dueDate: z.string().date().optional(),
+  dueDate: z.iso.date().optional(),
 }).catchall(z.never());
 
 const updateIssueSchema = z.object({
-  issueId: z.string().uuid(),
+  issueId: z.uuid(),
   workspaceSlug: z.string().min(1),
   title: z.string().min(1).max(MAX_ISSUE_TITLE_LENGTH).optional(),
   description: z.string().max(5000).nullish(),
   status: z.enum(["backlog", "todo", "in_progress", "in_review", "done", "cancelled"]).optional(),
   priority: z.enum(["urgent", "high", "medium", "low", "none"]).optional(),
   assigneeId: z.string().min(1).optional().nullable(),
-  dueDate: z.string().date().optional().nullable(),
+  dueDate: z.iso.date().optional().nullable(),
 }).catchall(z.never());
 
 const deleteIssueSchema = z.object({
-  issueId: z.string().uuid(),
+  issueId: z.uuid(),
   workspaceSlug: z.string().min(1),
 }).catchall(z.never());
 
 const addLabelSchema = z.object({
-  issueId: z.string().uuid(),
-  labelId: z.string().uuid(),
+  issueId: z.uuid(),
+  labelId: z.uuid(),
   workspaceSlug: z.string().min(1),
 }).catchall(z.never());
 
 const removeLabelSchema = z.object({
-  issueId: z.string().uuid(),
-  labelId: z.string().uuid(),
+  issueId: z.uuid(),
+  labelId: z.uuid(),
   workspaceSlug: z.string().min(1),
 }).catchall(z.never());
 
 const addCommentSchema = z.object({
-  issueId: z.string().uuid(),
+  issueId: z.uuid(),
   workspaceSlug: z.string().min(1),
   body: z.string().min(1).max(5000),
 }).catchall(z.never());
 
 const updateCommentSchema = z.object({
-  commentId: z.string().uuid(),
+  commentId: z.uuid(),
   workspaceSlug: z.string().min(1),
   body: z.string().min(1).max(5000),
 }).catchall(z.never());
 
 const deleteCommentSchema = z.object({
-  commentId: z.string().uuid(),
+  commentId: z.uuid(),
   workspaceSlug: z.string().min(1),
 }).catchall(z.never());
 
 async function recordActivity(
-  tx: typeof db,
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
   params: {
     workspaceId: string;
     issueId: string;
@@ -109,10 +109,11 @@ export async function createIssue(input: unknown): Promise<Result<{ id: string; 
     }
 
     const result = await db.transaction(async (tx) => {
-      const [{ nextSeq }] = await tx
+      const seqResult = await tx
         .select({ nextSeq: sql<number>`COALESCE(MAX(${issues.sequenceId}), 0) + 1` })
         .from(issues)
         .where(eq(issues.projectId, parsed.projectId));
+      const nextSeq = seqResult[0]?.nextSeq ?? 1;
 
       const [issue] = await tx
         .insert(issues)
@@ -129,6 +130,7 @@ export async function createIssue(input: unknown): Promise<Result<{ id: string; 
           createdBy: userId,
         })
         .returning({ id: issues.id, sequenceId: issues.sequenceId, title: issues.title });
+      if (!issue) throw new PlaneError("INTERNAL_ERROR", "Failed to create issue.");
 
       await recordActivity(tx, {
         workspaceId: member.workspaceId,
@@ -148,12 +150,10 @@ export async function createIssue(input: unknown): Promise<Result<{ id: string; 
       workspaceSlug: parsed.workspaceSlug,
       changes: { 
         title: result.title, 
-        sequenceId: result.sequenceId,
         status: parsed.status ?? "backlog", 
         priority: parsed.priority ?? "none",
         assigneeId: parsed.assigneeId ?? null,
         dueDate: parsed.dueDate ?? null,
-        labels: [],
       },
       actorId: userId,
       timestamp: new Date().toISOString(),
@@ -206,6 +206,7 @@ export async function updateIssue(input: unknown): Promise<Result<{ id: string; 
         .set(updates)
         .where(eq(issues.id, parsed.issueId))
         .returning({ id: issues.id, title: issues.title });
+      if (!updated) throw new PlaneError("INTERNAL_ERROR", "Failed to update issue.");
 
       if (parsed.status !== undefined && parsed.status !== issue.status) {
         await recordActivity(tx, {
@@ -272,8 +273,8 @@ export async function updateIssue(input: unknown): Promise<Result<{ id: string; 
       workspaceSlug: parsed.workspaceSlug,
       changes: {
         title: parsed.title ?? issue.title,
-        status: parsed.status ?? (issue.status as IssueStatus),
-        priority: parsed.priority ?? (issue.priority as IssuePriority),
+        status: parsed.status ?? (issue.status),
+        priority: parsed.priority ?? (issue.priority),
         assigneeId: parsed.assigneeId ?? issue.assigneeId,
         dueDate: parsed.dueDate ?? issue.dueDate,
       },
@@ -406,6 +407,7 @@ export async function addComment(input: unknown): Promise<Result<{ id: string; b
         .insert(comments)
         .values({ issueId: parsed.issueId, authorId: userId, body: parsed.body })
         .returning({ id: comments.id, body: comments.body });
+      if (!comment) throw new PlaneError("INTERNAL_ERROR", "Failed to add comment.");
 
       await recordActivity(tx, {
         workspaceId: member.workspaceId,
@@ -454,6 +456,7 @@ export async function updateComment(input: unknown): Promise<Result<{ id: string
       .set({ body: parsed.body, updatedAt: new Date() })
       .where(eq(comments.id, parsed.commentId))
       .returning({ id: comments.id, body: comments.body });
+    if (!updated) throw new PlaneError("INTERNAL_ERROR", "Failed to update comment.");
 
     return updated;
   });
